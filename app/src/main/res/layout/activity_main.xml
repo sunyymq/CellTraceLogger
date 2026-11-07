@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="18dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="18dp">
+
+            <!-- 顶栏 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="monospace"
+                    android:letterSpacing="0.04"
+                    android:text="CellTraceLogger"
+                    android:textColor="@color/text"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/pill_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_pill_idle"
+                    android:fontFamily="monospace"
+                    android:paddingStart="12dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="5dp"
+                    android:text="IDLE"
+                    android:textColor="#8B98A5"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_sub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="蜂窝信号路测记录"
+                android:textColor="#6B7A8A"
+                android:textSize="11sp" />
+
+            <!-- 主读数卡 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txt_rat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="monospace"
+                            android:text="--"
+                            android:textColor="#A78BFA"
+                            android:textSize="30sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txt_carrier"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="等待采样"
+                            android:textColor="#8B98A5"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="bottom|end"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/txt_rsrp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="monospace"
+                                android:text="--"
+                                android:textColor="@color/text"
+                                android:textSize="38sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_marginBottom="7dp"
+                                android:text="dBm"
+                                android:textColor="#6B7A8A"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SS-RSRP"
+                            android:textColor="#4E5C6A"
+                            android:textSize="10sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.celltrace.logger.LevelBarsView
+                    android:id="@+id/bars"
+                    android:layout_width="match_parent"
+                    android:layout_height="26dp"
+                    android:layout_marginTop="12dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="14dp"
+                    android:background="#16202B" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RSRQ" />
+                        <TextView android:id="@+id/v_rsrq" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SINR" />
+                        <TextView android:id="@+id/v_sinr" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RSSI" />
+                        <TextView android:id="@+id/v_rssi" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 趋势卡 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/CardTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="RSRP 趋势" />
+
+                    <TextView
+                        android:id="@+id/txt_spark_range"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="monospace"
+                        android:text="等待采样"
+                        android:textColor="#6B7A8A"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
+                <com.celltrace.logger.SparklineView
+                    android:id="@+id/spark"
+                    android:layout_width="match_parent"
+                    android:layout_height="86dp"
+                    android:layout_marginTop="10dp" />
+            </LinearLayout>
+
+            <!-- 小区信息 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="小区信息" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="频段" />
+                        <TextView android:id="@+id/v_band" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ARFCN" />
+                        <TextView android:id="@+id/v_arfcn" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="PCI / PSC" />
+                        <TextView android:id="@+id/v_pci" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TAC / LAC" />
+                        <TextView android:id="@+id/v_tac" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CID / NCI" />
+                        <TextView android:id="@+id/v_cid" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="邻区数" />
+                        <TextView android:id="@+id/v_nb" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 位置 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    style="@style/CardTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="位置 / 运动" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="纬度" />
+                        <TextView android:id="@+id/v_lat" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="经度" />
+                        <TextView android:id="@+id/v_lon" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="速度 km/h" />
+                        <TextView android:id="@+id/v_speed" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="海拔 m" />
+                        <TextView android:id="@+id/v_alt" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="定位精度 m" />
+                        <TextView android:id="@+id/v_acc" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="参与定位卫星" />
+                        <TextView android:id="@+id/v_sats" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 邻区 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_card"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/txt_nb_title"
+                    style="@style/CardTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="邻区 · 0" />
+
+                <TextView
+                    android:id="@+id/txt_nb_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="暂无邻区上报（部分机型 / 部分网络不下发邻区列表）"
+                    android:textColor="#6B7A8A"
+                    android:textSize="11sp"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:id="@+id/nb_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:lineSpacingExtra="3dp"
+                android:text="CSV 字段：时间 · 制式 · 运营商 · TAC/LAC · CID · PCI · ARFCN · 频段 · RSRP/RSRQ/SINR · 经纬度 · 速度 · 邻区摘要。文件位于 Android/data/com.celltrace.logger/files/traces。"
+                android:textColor="#4E5C6A"
+                android:textSize="10sp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_bar"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txt_rows"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="0"
+                android:textColor="@color/text"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:text="00:00:00"
+                android:textColor="#6B7A8A"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/btn_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_primary"
+            android:fontFamily="monospace"
+            android:paddingStart="16dp"
+            android:paddingTop="11dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="11dp"
+            android:text="开始记录"
+            android:textColor="#04121A"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/btn_export"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/btn_ghost"
+            android:fontFamily="monospace"
+            android:paddingStart="14dp"
+            android:paddingTop="11dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="11dp"
+            android:text="导出"
+            android:textColor="#C7D2DE"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/btn_more"
+            android:layout_width="42dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/btn_ghost"
+            android:gravity="center"
+            android:paddingTop="9dp"
+            android:paddingBottom="11dp"
+            android:text="⋯"
+            android:textColor="#C7D2DE"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+</RelativeLayout>

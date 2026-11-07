@@ -1,0 +1,49 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.celltrace.logger'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.celltrace.logger'
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ''
+            minifyEnabled false
+        }
+        release {
+            // 不使用外部签名配置：CI 中由 debug 证书签名，便于直接侧载安装
+            minifyEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+
+    packaging {
+        resources {
+            excludes += ['META-INF/*.kotlin_module']
+        }
+    }
+}
+
+dependencies {
+    // 刻意不引入任何第三方/AndroidX 依赖：只用 Android Framework API
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:statusBarColor">@color/bg</item>
+        <item name="android:navigationBarColor">@color/bg</item>
+        <item name="android:colorPrimary">@color/bg</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="CardTitle">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">#8B98A5</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <style name="CellLabel">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">#6B7A8A</item>
+        <item name="android:letterSpacing">0.06</item>
+    </style>
+
+    <style name="CellValue">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginTop">3dp</item>
+    </style>
+</resources>
