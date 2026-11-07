@@ -33,6 +33,10 @@ public class TraceService extends Service {
 
     public static final String PREFS = "celltrace";
     public static final String KEY_INTERVAL = "interval_ms";
+    /** 用户"想要在记录"的意图：true 时 App 启动会自动继续记录 */
+    public static final String KEY_WANT_RECORD = "want_record";
+    /** 开机自启开关 */
+    public static final String KEY_BOOT = "boot_autostart";
 
     private static final String CHANNEL_ID = "trace";
     private static final int NOTIF_ID = 4711;
@@ -86,8 +90,16 @@ public class TraceService extends Service {
         // 5 秒内必须进入前台
         startForegroundSafe(buildNotification(null));
 
-        if (ACTION_START_RECORD.equals(action)) startRecording();
-        else if (ACTION_STOP_RECORD.equals(action)) stopRecording();
+        if (ACTION_START_RECORD.equals(action)) {
+            setWantRecord(true);
+            startRecording();
+        } else if (ACTION_STOP_RECORD.equals(action)) {
+            setWantRecord(false);
+            stopRecording();
+        } else if (action == null) {
+            // App 启动 / 系统重启后拉起：照用户上次的意图自动续记（没定位权限就不写废数据）
+            if (wantRecord() && hasLocationPermission()) startRecording();
+        }
 
         if (!running) {
             running = true;
@@ -100,7 +112,7 @@ public class TraceService extends Service {
     private void startRecording() {
         if (AppState.recording) return;
         if (csv == null) csv = new CsvStore();
-        if (!csv.open(this)) {
+        if (!csv.open(this, intervalMs)) {
             toast("无法创建记录文件");
             return;
         }
@@ -108,6 +120,25 @@ public class TraceService extends Service {
         startedAt = System.currentTimeMillis();
         AppState.recording = true;
         acquireWakeLock();
+    }
+
+    private boolean wantRecord() {
+        return getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean(KEY_WANT_RECORD, true);
+    }
+
+    private boolean hasLocationPermission() {
+        return checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == android.content.pm.PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void setWantRecord(boolean v) {
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(KEY_WANT_RECORD, v).apply();
+    }
+
+    /** 供 BootReceiver 判断是否该在开机后拉起记录 */
+    public static boolean shouldRecordOnBoot(Context c) {
+        SharedPreferences sp = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        return sp.getBoolean(KEY_BOOT, false) && sp.getBoolean(KEY_WANT_RECORD, true);
     }
 
     private void stopRecording() {
@@ -123,7 +154,7 @@ public class TraceService extends Service {
 
         if (s.recording) {
             if (csv == null) csv = new CsvStore();
-            if (!csv.isOpen()) csv.open(this);
+            if (!csv.isOpen()) csv.open(this, intervalMs);
             if (s.primary != null) {
                 csv.append(s.primary);
                 rows = csv.rows();

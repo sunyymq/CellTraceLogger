@@ -15,13 +15,31 @@
 
 ```
 epoch_ms, time, registered, slot, rat, carrier, mcc, mnc, tac, cid, pci, arfcn, band,
-rsrp_dbm, rsrq_db, sinr_db, rssi_dbm, level, lat, lon, alt_m, speed_mps, acc_m, sats,
+rsrp_dbm, rsrq_db, sinr_db, rssi_dbm, level,
+lat, lon, loc_time_ms, loc_age_s, alt_m, speed_mps, acc_m, sats,
 neighbor_count, neighbors
 ```
 
-`neighbors` 形如 `LTE/123/-95;NR/456/-102`。
+- `lat/lon` — 该行对应的坐标（WGS-84）
+- `loc_time_ms` / `loc_age_s` — **坐标自己的采集时刻与数据年龄**。定位没有刷新时坐标是复用的旧值，
+  这一列告诉你它有多旧（>5 秒参考价值下降，App 里会用黄色标出）
+- `neighbors` 形如 `LTE/123/-95;NR/456/-102`
+
+每个 CSV 旁边还有一个同名 `.meta.json`：设备型号、Android 版本、采样间隔、起始时间、时区、列定义。
 
 记录文件位置：`Android/data/com.celltrace.logger/files/traces/trace_YYYYMMDD_HHMMSS.csv`
+
+## 自动记录
+
+- App 启动即自动开始记录（默认开启，尊重上次「停止」的意图）
+- 「⋯」→ **开机自动记录：开** ⇒ 重启手机后自动拉起前台服务继续记录
+- 息屏、切后台继续采（前台服务 + PARTIAL_WAKE_LOCK）
+
+## 导出
+
+- 底部「导出」→ 系统分享面板（微信 / 邮箱 / 网盘）
+- 「⋯」→ **导出到「下载」文件夹** ⇒ 复制到 `下载/CellTraceLogger/`，插数据线直接用
+  （Android 10+ 走 MediaStore，无需存储权限）
 
 ## 构建
 

@@ -366,6 +366,23 @@
                         <TextView android:id="@+id/v_sats" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="坐标时间点" />
+                        <TextView android:id="@+id/v_loctime" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+                        <TextView style="@style/CellLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="坐标年龄 s" />
+                        <TextView android:id="@+id/v_locage" style="@style/CellValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="--" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <!-- 邻区 -->

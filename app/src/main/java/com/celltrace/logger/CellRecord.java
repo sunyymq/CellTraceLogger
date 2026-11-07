@@ -1,5 +1,9 @@
 package com.celltrace.logger;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * 一次采样中的一个小区（含服务小区与邻区）的全部字段。
  * 数值型字段用 {@link #INVALID} 表示"设备没有上报"。
@@ -41,6 +45,10 @@ public class CellRecord {
 
     public double lat = Double.NaN;
     public double lon = Double.NaN;
+    /** 该定位点的采集时刻（epoch ms）；0 表示没有定位 */
+    public long locTs;
+    /** 定位数据年龄（秒）；-1 表示无定位。> 3 秒说明是旧坐标，参考价值下降 */
+    public double locAge = -1;
     public double alt = Double.NaN;
     public double speed = Double.NaN;
     public double accuracy = Double.NaN;
@@ -83,15 +91,16 @@ public class CellRecord {
 
     private static String d(double v, int digits) {
         if (Double.isNaN(v)) return "";
-        return String.format(java.util.Locale.US, "%." + digits + "f", v);
+        return String.format(Locale.US, "%." + digits + "f", v);
     }
 
-    /** 一行 CSV（不含换行） */
+    /**
+     * 一行 CSV（不含换行）。列顺序必须与 CsvStore.HEADER 完全一致。
+     */
     public String toCsv() {
         StringBuilder sb = new StringBuilder(256);
         sb.append(ts).append(',');
-        sb.append(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", java.util.Locale.US)
-                .format(new java.util.Date(ts))).append(',');
+        sb.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.US).format(new Date(ts))).append(',');
         sb.append(registered ? 1 : 0).append(',');
         sb.append(slot).append(',');
         sb.append(q(rat)).append(',');
@@ -108,8 +117,11 @@ public class CellRecord {
         sb.append(n(sinr)).append(',');
         sb.append(n(rssi)).append(',');
         sb.append(level).append(',');
+        // 坐标 + 坐标自己的时间点（关键：坐标可能比这行数据旧）
         sb.append(d(lat, 7)).append(',');
         sb.append(d(lon, 7)).append(',');
+        sb.append(locTs > 0 ? String.valueOf(locTs) : "").append(',');
+        sb.append(locAge >= 0 ? String.format(Locale.US, "%.1f", locAge) : "").append(',');
         sb.append(d(alt, 1)).append(',');
         sb.append(d(speed, 2)).append(',');
         sb.append(d(accuracy, 1)).append(',');

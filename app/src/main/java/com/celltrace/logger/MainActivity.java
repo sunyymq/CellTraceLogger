@@ -19,7 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,6 +50,8 @@ public class MainActivity extends Activity implements AppState.Listener {
     private TextView vAlt;
     private TextView vAcc;
     private TextView vSats;
+    private TextView vLoctime;
+    private TextView vLocage;
     private TextView txtNbTitle;
     private TextView txtNbEmpty;
     private TextView txtRows;
@@ -95,6 +99,8 @@ public class MainActivity extends Activity implements AppState.Listener {
         vAlt = findViewById(R.id.v_alt);
         vAcc = findViewById(R.id.v_acc);
         vSats = findViewById(R.id.v_sats);
+        vLoctime = findViewById(R.id.v_loctime);
+        vLocage = findViewById(R.id.v_locage);
         txtNbTitle = findViewById(R.id.txt_nb_title);
         txtNbEmpty = findViewById(R.id.txt_nb_empty);
         txtRows = findViewById(R.id.txt_rows);
@@ -148,6 +154,10 @@ public class MainActivity extends Activity implements AppState.Listener {
                 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             need.add(Manifest.permission.POST_NOTIFICATIONS);
         }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+                && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            need.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
         if (!need.isEmpty()) {
             requestPermissions(need.toArray(new String[0]), REQ_PERM);
         }
@@ -160,6 +170,9 @@ public class MainActivity extends Activity implements AppState.Listener {
         boolean ok = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         if (!ok) {
             toast("未授予定位权限：Android 要求定位权限才能读取小区信息");
+        } else {
+            // 权限到手后让服务按「自动记录」意图开工
+            startServiceSafely(null);
         }
     }
 
@@ -234,6 +247,8 @@ public class MainActivity extends Activity implements AppState.Listener {
             vAlt.setText("--");
             vAcc.setText("--");
             vSats.setText("--");
+            vLoctime.setText("--");
+            vLocage.setText("--");
             setNeighbors(new ArrayList<CellRecord>());
             return;
         }
@@ -278,6 +293,19 @@ public class MainActivity extends Activity implements AppState.Listener {
         vAlt.setText(Double.isNaN(p.alt) ? "--" : String.format(Locale.US, "%.0f", p.alt));
         vAcc.setText(Double.isNaN(p.accuracy) ? "--" : String.format(Locale.US, "%.0f", p.accuracy));
         vSats.setText(p.sats < 0 ? "--" : String.valueOf(p.sats));
+
+        if (p.locTs > 0) {
+            vLoctime.setText(new SimpleDateFormat("HH:mm:ss", Locale.US).format(new Date(p.locTs)));
+        } else {
+            vLoctime.setText("--");
+        }
+        if (p.locAge >= 0) {
+            vLocage.setText(String.format(Locale.US, "%.1f", p.locAge));
+            vLocage.setTextColor(p.locAge > 5 ? 0xFFFBBF24 : 0xFFE6EDF3);
+        } else {
+            vLocage.setText("--");
+            vLocage.setTextColor(0xFF6B7A8A);
+        }
 
         setNeighbors(s.neighbors);
     }
@@ -388,6 +416,21 @@ public class MainActivity extends Activity implements AppState.Listener {
                 .show();
     }
 
+    private void exportToDownloads() {
+        List<File> files = CsvStore.list(this);
+        if (files.isEmpty()) {
+            toast("还没有记录文件");
+            return;
+        }
+        String msg = DownloadExport.copy(this, files.get(0));
+        toast(msg);
+    }
+
+    private boolean bootEnabled() {
+        return getSharedPreferences(TraceService.PREFS, MODE_PRIVATE)
+                .getBoolean(TraceService.KEY_BOOT, false);
+    }
+
     private void share(File f) {
         Uri uri = ExportProvider.uriFor(f);
         Intent send = new Intent(Intent.ACTION_SEND);
@@ -411,7 +454,9 @@ public class MainActivity extends Activity implements AppState.Listener {
         menu.getMenu().add(0, 3, 2, "采样间隔 2 秒");
         menu.getMenu().add(0, 4, 3, "采样间隔 5 秒");
         menu.getMenu().add(0, 5, 4, "记录文件位置");
-        menu.getMenu().add(0, 6, 5, "清空全部记录");
+        menu.getMenu().add(0, 7, 5, "导出到「下载」文件夹");
+        menu.getMenu().add(0, 8, 6, bootEnabled() ? "开机自动记录：开" : "开机自动记录：关");
+        menu.getMenu().add(0, 6, 7, "清空全部记录");
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -438,6 +483,15 @@ public class MainActivity extends Activity implements AppState.Listener {
                         return true;
                     case 6:
                         confirmClear();
+                        return true;
+                    case 7:
+                        exportToDownloads();
+                        return true;
+                    case 8:
+                        boolean on = !bootEnabled();
+                        getSharedPreferences(TraceService.PREFS, MODE_PRIVATE)
+                                .edit().putBoolean(TraceService.KEY_BOOT, on).apply();
+                        toast(on ? "已开启：重启手机后自动开始记录" : "已关闭开机自动记录");
                         return true;
                     default:
                         return false;

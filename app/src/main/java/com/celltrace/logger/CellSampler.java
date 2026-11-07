@@ -82,6 +82,8 @@ public class CellSampler {
             if (l != null) {
                 primary.lat = l.getLatitude();
                 primary.lon = l.getLongitude();
+                primary.locTs = l.getTime();
+                primary.locAge = Math.max(0, (System.currentTimeMillis() - l.getTime()) / 1000.0);
                 primary.alt = l.hasAltitude() ? l.getAltitude() : Double.NaN;
                 primary.speed = l.hasSpeed() ? l.getSpeed() : Double.NaN;
                 primary.accuracy = l.hasAccuracy() ? l.getAccuracy() : Double.NaN;
